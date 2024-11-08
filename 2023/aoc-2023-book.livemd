@@ -1,0 +1,60 @@
+<!-- livebook:{"autosave_interval_s":600} -->
+
+# Advent of Code 2023
+
+## Section
+
+```elixir
+input_path = System.fetch_env!("LB_MAC_AOC_2023_INPUT")
+
+```
+
+```elixir
+defmodule ASCII do
+  def is_digit(char) do
+    char >= 47 and char <= 57
+  end
+end
+```
+
+```elixir
+"hello" |> String.to_charlist() |> Enum.each(fn it -> IO.puts(it) end)
+```
+
+```elixir
+defmodule Day1Part1 do
+  defp find_numbers([], low, high) do
+    { low, high }
+  end
+  
+  defp find_numbers([next|rest], low, high) do
+    if (ASCII.is_digit(next)) do
+      number = String.to_integer(next)
+      if (low == 0) do
+        find_numbers(number, number, rest)
+      else
+        find_numbers(low, number, rest)
+      end
+    else
+      find_numbers(low, high, rest)
+    end
+  end
+
+  def parse_number(input) do
+    { low, high } = find_numbers(String.to_charlist(input), 0, 0)
+    String.to_integer(low <> high)
+  end
+end
+```
+
+```elixir
+Day1Part1.parse_number("hello1world2h")
+```
+
+```elixir
+File.stream!(input_path <> "/day1.txt")
+|> Stream.map(&Day1Part1.parse_number/1)
+|> Enum.each(&IO.puts/1)
+```
+
+<!-- livebook:{"offset":1062,"stamp":{"token":"XCP.kSJXEDMj78RgjdoEKsuzM7y5OjkyJAxEZaaD3iJiFyv_HpIOBm8WG_4DAHocdBwAbb0eRBioFOlIIbF6N-Nb1qmBcNisJOHBB81tJxKfMM4lCjsHoUNA7t3PKBVS","version":2}} -->
