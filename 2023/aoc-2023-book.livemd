@@ -96,7 +96,10 @@ defmodule Day1Part2 do
         find_numbers(rest, next_str, low, high)
       else
         value = Map.fetch!(@numbers, match)
-        find_numbers(rest, "", if (low == "") do value else low end, value)
+        # using String.last is really gross, but im sick of this one
+        # since there can be overlap, but will only ever overlap in the last letter
+        # just start the next string with the last letter
+        find_numbers(rest, String.last(next_str), if (low == "") do value else low end, value)
       end
     end
   end
@@ -109,7 +112,7 @@ end
 ```
 
 ```elixir
-Day1Part2.parse_number("zoneight234")
+Day1Part2.parse_number("zoneightabc")
 ```
 
 #### Answer
@@ -118,8 +121,7 @@ Day1Part2.parse_number("zoneight234")
 # Question 1 Part 2 answer
 File.stream!(input_path <> "/day1.txt")
 |> Stream.map(&Day1Part2.parse_number/1)
-|> Enum.each(&IO.puts/1)
-#|> Enum.sum
+|> Enum.sum
 ```
 
-<!-- livebook:{"offset":2298,"stamp":{"token":"XCP.5q4MXO5HnVq7HKdfSK7GhlgtPO-fCCJCEjdjHNpH7cUZtoU5dwvO1sKxPDk4i99CcOT3HwVrNdOPK84arv1-eHeMk5L0bXxcs4q4g-8neOKCYsoIq3sNed3BGiUX","version":2}} -->
+<!-- livebook:{"offset":2502,"stamp":{"token":"XCP.QxSfnXLHqRI9tPXZ_AtFbASAhFDkBSMjAXXWIreVZ9vXlowfI3uPS5BolRX_ybf_vIklCnJMj3BoLbz4hGbW64VJIft82B0Fl-czBKJ5tUN4h2ThgFgC8E3-Qyn6","version":2}} -->
