@@ -2,7 +2,9 @@
 
 # Advent of Code 2023
 
-## Section
+## Question 1
+
+### Part 1
 
 ```elixir
 input_path = System.fetch_env!("LB_MAC_AOC_2023_INPUT")
@@ -12,13 +14,17 @@ input_path = System.fetch_env!("LB_MAC_AOC_2023_INPUT")
 ```elixir
 defmodule ASCII do
   def is_digit(char) do
-    char >= 47 and char <= 57
+    char >= "0" and char <= "9"
   end
 end
 ```
 
 ```elixir
-"hello" |> String.to_charlist() |> Enum.each(fn it -> IO.puts(it) end)
+ASCII.is_digit("8")
+```
+
+```elixir
+"hello" |> String.graphemes() #|> Enum.each(fn it -> IO.puts(it) end)
 ```
 
 ```elixir
@@ -29,19 +35,14 @@ defmodule Day1Part1 do
   
   defp find_numbers([next|rest], low, high) do
     if (ASCII.is_digit(next)) do
-      number = String.to_integer(next)
-      if (low == 0) do
-        find_numbers(number, number, rest)
-      else
-        find_numbers(low, number, rest)
-      end
+      find_numbers(rest, if (low == "") do next else low end, next)
     else
-      find_numbers(low, high, rest)
+      find_numbers(rest, low, high)
     end
   end
 
   def parse_number(input) do
-    { low, high } = find_numbers(String.to_charlist(input), 0, 0)
+    { low, high } = find_numbers(String.graphemes(input), "", "")
     String.to_integer(low <> high)
   end
 end
@@ -51,10 +52,74 @@ end
 Day1Part1.parse_number("hello1world2h")
 ```
 
+#### Answer
+
 ```elixir
+# Question 1 Part 1 answer
 File.stream!(input_path <> "/day1.txt")
 |> Stream.map(&Day1Part1.parse_number/1)
-|> Enum.each(&IO.puts/1)
+|> Enum.sum
 ```
 
-<!-- livebook:{"offset":1062,"stamp":{"token":"XCP.kSJXEDMj78RgjdoEKsuzM7y5OjkyJAxEZaaD3iJiFyv_HpIOBm8WG_4DAHocdBwAbb0eRBioFOlIIbF6N-Nb1qmBcNisJOHBB81tJxKfMM4lCjsHoUNA7t3PKBVS","version":2}} -->
+### Part 2
+
+```elixir
+defmodule Day1Part2 do
+  @numbers %{ 
+    "one" => "1", 
+    "two" => "2", 
+    "three" => "3", 
+    "four" => "4", 
+    "five" => "5", 
+    "six" => "6", 
+    "seven" => "7", 
+    "eight" => "8", 
+    "nine" => "9"
+  }
+  
+  defp find_numbers([], _, low, high) do
+    { low, high }
+  end
+  
+  defp find_numbers([next|rest], current_str, low, high) do
+    if (ASCII.is_digit(next)) do
+      find_numbers(rest, "", if (low == "") do next else low end, next)
+    else
+      next_str = current_str <> next
+      
+      match =
+        @numbers
+        |> Map.keys
+        |> Enum.find(fn k -> String.contains?(next_str, k) end)
+
+      if (match == nil) do
+        find_numbers(rest, next_str, low, high)
+      else
+        value = Map.fetch!(@numbers, match)
+        find_numbers(rest, "", if (low == "") do value else low end, value)
+      end
+    end
+  end
+  
+  def parse_number(input) do
+    { low, high } = find_numbers(String.graphemes(input), "", "", "")
+    String.to_integer(low <> high)
+  end
+end
+```
+
+```elixir
+Day1Part2.parse_number("zoneight234")
+```
+
+#### Answer
+
+```elixir
+# Question 1 Part 2 answer
+File.stream!(input_path <> "/day1.txt")
+|> Stream.map(&Day1Part2.parse_number/1)
+|> Enum.each(&IO.puts/1)
+#|> Enum.sum
+```
+
+<!-- livebook:{"offset":2298,"stamp":{"token":"XCP.5q4MXO5HnVq7HKdfSK7GhlgtPO-fCCJCEjdjHNpH7cUZtoU5dwvO1sKxPDk4i99CcOT3HwVrNdOPK84arv1-eHeMk5L0bXxcs4q4g-8neOKCYsoIq3sNed3BGiUX","version":2}} -->
